@@ -1,0 +1,348 @@
+.pairing-page {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,.07);
+}
+
+/* ── Intro ── */
+.pairing-intro {
+  margin-bottom: 1.75rem;
+}
+
+.pairing-intro h2 {
+  font-family: "Nunito", sans-serif;
+  font-size: 1.7rem;
+  color: #6b1f1f;
+  letter-spacing: .01em;
+  margin-bottom: .35rem;
+}
+
+.pairing-intro p {
+  font-size: .9rem;
+  color: #7a5a42;
+  line-height: 1.5;
+}
+
+/* ── Back button ── */
+.pairing-back-btn {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: .85rem;
+  font-weight: 600;
+  color: #9a6b4b;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 1.25rem;
+  display: inline-block;
+  transition: color .12s;
+}
+
+.pairing-back-btn:hover { color: #6b1f1f; }
+
+/* ── Option cards ── */
+.pairing-options {
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+}
+
+.pairing-option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .25rem;
+  padding: 1.25rem 1.4rem;
+  background: #fdf9f5;
+  border: 1.5px solid #d9c8b8;
+  border-radius: 10px;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background .12s, border-color .12s, box-shadow .12s;
+}
+
+.pairing-option-card:hover {
+  background: #f5ede3;
+  border-color: #c4a882;
+  box-shadow: 0 2px 8px rgba(0,0,0,.07);
+}
+
+.pairing-option-icon {
+  font-size: 1.6rem;
+  margin-bottom: .1rem;
+}
+
+.pairing-option-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #4a2c1a;
+}
+
+.pairing-option-desc {
+  font-size: .82rem;
+  color: #9a6b4b;
+  line-height: 1.4;
+}
+
+/* ── Scan menus grid ── */
+.scan-menus-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.scan-menu-box {
+  border: 1.5px solid #d9c8b8;
+  border-radius: 8px;
+  padding: .85rem;
+  background: #fdf9f5;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.scan-menu-box-label {
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: #9a6b4b;
+}
+
+.scan-food-select {
+  margin-bottom: 1rem;
+}
+
+.wine-list-ref {
+  font-size: .8rem;
+  color: #9a6b4b;
+  margin: -.5rem 0 1rem;
+}
+
+/* ── Scan UI ── */
+.scan-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .45rem 1.1rem;
+  background: #fff;
+  border: 1.5px solid #d9c8b8;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: .85rem;
+  font-weight: 600;
+  color: #4a2c1a;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+  align-self: flex-start;
+}
+
+.scan-upload-btn--compact {
+  font-size: .78rem;
+  padding: .35rem .85rem;
+}
+
+.scan-upload-btn:hover { background: #ecdfc8; border-color: #ecdfc8; }
+
+.scan-preview {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 6px;
+  border: 1px solid #d9c8b8;
+  background: #fff;
+}
+
+.scan-preview--small {
+  max-height: 100px;
+}
+
+.scan-status {
+  font-size: .82rem;
+  margin: 0 0 .85rem;
+}
+
+.scan-status--loading { color: #9a6b4b; font-style: italic; }
+.scan-status--error   { color: #c0392b; }
+
+.scan-results-label {
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: #9a6b4b;
+  margin-bottom: .5rem;
+}
+
+/* ── Selected chips ── */
+.pairing-selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-bottom: 1.25rem;
+  padding: .75rem 1rem;
+  background: #fdf9f5;
+  border: 1.5px solid #d9c8b8;
+  border-radius: 8px;
+}
+
+.pairing-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .25rem .65rem;
+  border-radius: 14px;
+  background: #6b1f1f;
+  color: #fff;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.pairing-chip-remove {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,.75);
+  cursor: pointer;
+  font-size: .95rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.pairing-chip-remove:hover { color: #fff; }
+
+/* ── Categories ── */
+.pairing-categories {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  margin-bottom: 1.5rem;
+}
+
+.pairing-category {
+  border: 1.5px solid #d9c8b8;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.pairing-cat-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .55rem .9rem;
+  background: #fdf9f5;
+  border: none;
+  font-family: inherit;
+  font-size: .85rem;
+  font-weight: 700;
+  color: #4a2c1a;
+  cursor: pointer;
+  text-align: left;
+  transition: background .12s;
+}
+
+.pairing-cat-btn:hover       { background: #f5ede3; }
+.pairing-cat-btn--open       { background: #f0e0cc; }
+
+.pairing-cat-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: #6b1f1f;
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.pairing-cat-chevron {
+  margin-left: auto;
+  font-size: .6rem;
+  color: #9a6b4b;
+}
+
+/* ── Food tag grid ── */
+.pairing-food-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  padding: .65rem .75rem;
+  border-top: 1px solid #e8d8c8;
+  background: #fff;
+}
+
+.pairing-food-grid--scan {
+  border-top: none;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.pairing-food-tag {
+  padding: .3rem .8rem;
+  border-radius: 16px;
+  border: 1.5px solid #d9c8b8;
+  background: #fdf9f5;
+  font-family: inherit;
+  font-size: .8rem;
+  font-weight: 500;
+  color: #4a2c1a;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+}
+
+.pairing-food-tag:hover:not(.active) {
+  border-color: #9a6b4b;
+  background: #f5ede3;
+}
+
+.pairing-food-tag.active {
+  background: #6b1f1f;
+  border-color: #6b1f1f;
+  color: #fff;
+}
+
+/* ── Find button ── */
+.pairing-btn-find {
+  width: 100%;
+  padding: .75rem 1.8rem;
+  background: #6b1f1f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+  margin-bottom: 1.25rem;
+}
+
+.pairing-btn-find:hover:not(:disabled) { background: #8b2e2e; }
+
+.pairing-btn-find:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+/* ── Result ── */
+.pairing-result {
+  padding: 1rem 1.1rem;
+  background: #fdf9f0;
+  border: 1px solid #e8d4a0;
+  border-radius: 8px;
+  font-size: .88rem;
+  color: #3a2a00;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 520px) {
+  .pairing-page { padding: 1.5rem 1rem; }
+  .scan-menus-grid { grid-template-columns: 1fr; }
+}

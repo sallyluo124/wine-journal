@@ -1,0 +1,14 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Nunito", sans-serif;
+  background: #faf7f2;
+  color: #2c1a0e;
+  min-height: 100vh;
+}
+
+#root {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}

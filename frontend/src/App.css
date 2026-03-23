@@ -1,0 +1,87 @@
+.app-header {
+  margin-bottom: 0;
+}
+
+.app-header h1 {
+  font-family: "Great Vibes", cursive;
+  font-size: 2.6rem;
+  color: #6b1f1f;
+  letter-spacing: .02em;
+}
+
+/* ── Top-level section tabs ── */
+.section-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e8d8c8;
+  margin-bottom: 1.5rem;
+}
+
+.section-btn {
+  padding: .65rem 1.4rem;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  background: none;
+  font-family: inherit;
+  font-size: .95rem;
+  font-weight: 700;
+  color: #9a6b4b;
+  cursor: pointer;
+  transition: color .12s, border-color .12s;
+}
+
+.section-btn:hover { color: #4a2c1a; }
+
+.section-btn--active {
+  color: #6b1f1f;
+  border-bottom-color: #6b1f1f;
+}
+
+/* ── Journal sub-tabs ── */
+.app-nav {
+  display: flex;
+  gap: .4rem;
+  margin-bottom: 1.25rem;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .45rem 1rem;
+  border-radius: 20px;
+  border: 1.5px solid #d9c8b8;
+  background: #fff;
+  font-family: inherit;
+  font-size: .875rem;
+  color: #4a2c1a;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+}
+
+.nav-btn:hover { background: #f5ede3; }
+
+.nav-btn.active {
+  background: #6b1f1f;
+  border-color: #6b1f1f;
+  color: #fff;
+}
+
+.nav-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.25);
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.nav-btn:not(.active) .nav-count {
+  background: #d9c8b8;
+  color: #4a2c1a;
+}

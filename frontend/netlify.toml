@@ -1,0 +1,78 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# ── API proxy ──────────────────────────────────────────────────────────────
+# Replace YOUR_BACKEND_URL with your Railway URL (e.g. https://somm-api.railway.app)
+
+[[redirects]]
+  from  = "/tastings"
+  to    = "https://YOUR_BACKEND_URL/tastings"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from  = "/tastings/*"
+  to    = "https://YOUR_BACKEND_URL/tastings/:splat"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from  = "/lookup"
+  to    = "https://YOUR_BACKEND_URL/lookup"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from  = "/detect"
+  to    = "https://YOUR_BACKEND_URL/detect"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from  = "/pairings"
+  to    = "https://YOUR_BACKEND_URL/pairings"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from  = "/scan-label"
+  to    = "https://YOUR_BACKEND_URL/scan-label"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from  = "/scan-menu"
+  to    = "https://YOUR_BACKEND_URL/scan-menu"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from  = "/scan-wine-menu"
+  to    = "https://YOUR_BACKEND_URL/scan-wine-menu"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from  = "/menu-pairings"
+  to    = "https://YOUR_BACKEND_URL/menu-pairings"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from  = "/food-pairings"
+  to    = "https://YOUR_BACKEND_URL/food-pairings"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from  = "/wine-food-pairings"
+  to    = "https://YOUR_BACKEND_URL/wine-food-pairings"
+  status = 200
+  force  = true
+
+# ── SPA fallback ───────────────────────────────────────────────────────────
+[[redirects]]
+  from  = "/*"
+  to    = "/index.html"
+  status = 200
