@@ -115,6 +115,30 @@ export default function TastingForm({ onSaved }) {
     setForm((f) => ({ ...f, [field]: value }));
   }
 
+  function setWineField(field, value) {
+    setForm((f) => ({
+      ...f,
+      [field]: value,
+      color: "",
+      rating: 0,
+      notes: "",
+      country: "",
+      region: "",
+      village: "",
+      grapes: [],
+      acidity: 3,
+      tannin: 3,
+      body: 3,
+      alcohol: 3,
+    }));
+    setManualAromas(new Set());
+    setAutoAromas(new Set());
+    setManualStructure({});
+    setAutoStructure({});
+    setPairings({ loading: false, text: "" });
+    setMode(null);
+  }
+
   function toggleAroma(aroma) {
     setManualAromas((prev) => {
       const next = new Set(prev);
@@ -327,7 +351,7 @@ export default function TastingForm({ onSaved }) {
               type="text"
               required
               value={form.wine_name}
-              onChange={(e) => set("wine_name", e.target.value)}
+              onChange={(e) => setWineField("wine_name", e.target.value)}
             />
           </label>
           <label>
@@ -335,7 +359,7 @@ export default function TastingForm({ onSaved }) {
             <input
               type="text"
               value={form.producer}
-              onChange={(e) => set("producer", e.target.value)}
+              onChange={(e) => setWineField("producer", e.target.value)}
             />
           </label>
         </div>
