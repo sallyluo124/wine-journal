@@ -307,7 +307,14 @@ export default function TastingForm({ onSaved }) {
         <button
           type="button"
           className={`mode-btn ${mode === "manual" ? "mode-btn--active" : ""}`}
-          onClick={() => setMode("manual")}
+          onClick={() => {
+            setMode("manual");
+            setAutoAromas(new Set());
+            setManualAromas(new Set());
+            setAutoStructure({});
+            setManualStructure({});
+            setForm((f) => ({ ...f, color: "", acidity: 3, tannin: 3, body: 3, alcohol: 3 }));
+          }}
         >
           Fill it out myself
         </button>
