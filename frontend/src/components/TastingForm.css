@@ -599,3 +599,26 @@ input[type="range"]::-webkit-slider-thumb {
     font-size: .7rem;
   }
 }
+
+
+.input-clearable {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-clearable input {
+  width: 100%;
+  padding-right: 1.8rem;
+}
+.input-clear-btn {
+  position: absolute;
+  right: .4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: #999;
+  line-height: 1;
+  padding: 0 .2rem;
+}
+.input-clear-btn:hover { color: #333; }

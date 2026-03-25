@@ -347,20 +347,30 @@ export default function TastingForm({ onSaved }) {
         <div className="row-2">
           <label>
             Wine name *
-            <input
-              type="text"
-              required
-              value={form.wine_name}
-              onChange={(e) => setWineField("wine_name", e.target.value)}
-            />
+            <div className="input-clearable">
+              <input
+                type="text"
+                required
+                value={form.wine_name}
+                onChange={(e) => setWineField("wine_name", e.target.value)}
+              />
+              {form.wine_name && (
+                <button type="button" className="input-clear-btn" onClick={() => setWineField("wine_name", "")}>×</button>
+              )}
+            </div>
           </label>
           <label>
             Producer
-            <input
-              type="text"
-              value={form.producer}
-              onChange={(e) => setWineField("producer", e.target.value)}
-            />
+            <div className="input-clearable">
+              <input
+                type="text"
+                value={form.producer}
+                onChange={(e) => setWineField("producer", e.target.value)}
+              />
+              {form.producer && (
+                <button type="button" className="input-clear-btn" onClick={() => setWineField("producer", "")}>×</button>
+              )}
+            </div>
           </label>
         </div>
         {/* Origin */}
