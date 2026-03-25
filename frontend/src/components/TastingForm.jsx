@@ -310,10 +310,14 @@ export default function TastingForm({ onSaved }) {
           onClick={() => {
             setMode("manual");
             setAutoAromas(new Set());
-            setManualAromas(new Set());
             setAutoStructure({});
-            setManualStructure({});
-            setForm((f) => ({ ...f, color: "", acidity: 3, tannin: 3, body: 3, alcohol: 3 }));
+            setForm((f) => ({
+              ...f,
+              acidity: manualStructure.acidity ?? 3,
+              tannin:  manualStructure.tannin  ?? 3,
+              body:    manualStructure.body    ?? 3,
+              alcohol: manualStructure.alcohol ?? 3,
+            }));
           }}
         >
           Fill it out myself
