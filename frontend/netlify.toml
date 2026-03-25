@@ -3,71 +3,71 @@
   publish = "dist"
 
 # ── API proxy ──────────────────────────────────────────────────────────────
-# Replace YOUR_BACKEND_URL with your Railway URL (e.g. https://somm-api.railway.app)
+# Replace wine-journal-production.up.railway.app with your Railway URL (e.g. https://somm-api.railway.app)
 
 [[redirects]]
   from  = "/tastings"
-  to    = "https://YOUR_BACKEND_URL/tastings"
+  to    = "https://wine-journal-production.up.railway.app/tastings"
   status = 200
   force  = true
 
 [[redirects]]
   from  = "/tastings/*"
-  to    = "https://YOUR_BACKEND_URL/tastings/:splat"
+  to    = "https://wine-journal-production.up.railway.app/tastings/:splat"
   status = 200
   force  = true
 
 [[redirects]]
   from  = "/lookup"
-  to    = "https://YOUR_BACKEND_URL/lookup"
+  to    = "https://wine-journal-production.up.railway.app/lookup"
   status = 200
   force  = true
 
 [[redirects]]
   from  = "/detect"
-  to    = "https://YOUR_BACKEND_URL/detect"
+  to    = "https://wine-journal-production.up.railway.app/detect"
   status = 200
   force  = true
 
 [[redirects]]
   from  = "/pairings"
-  to    = "https://YOUR_BACKEND_URL/pairings"
+  to    = "https://wine-journal-production.up.railway.app/pairings"
   status = 200
   force  = true
 
 [[redirects]]
   from  = "/scan-label"
-  to    = "https://YOUR_BACKEND_URL/scan-label"
+  to    = "https://wine-journal-production.up.railway.app/scan-label"
   status = 200
   force  = true
 
 [[redirects]]
   from  = "/scan-menu"
-  to    = "https://YOUR_BACKEND_URL/scan-menu"
+  to    = "https://wine-journal-production.up.railway.app/scan-menu"
   status = 200
   force  = true
 
 [[redirects]]
   from  = "/scan-wine-menu"
-  to    = "https://YOUR_BACKEND_URL/scan-wine-menu"
+  to    = "https://wine-journal-production.up.railway.app/scan-wine-menu"
   status = 200
   force  = true
 
 [[redirects]]
   from  = "/menu-pairings"
-  to    = "https://YOUR_BACKEND_URL/menu-pairings"
+  to    = "https://wine-journal-production.up.railway.app/menu-pairings"
   status = 200
   force  = true
 
 [[redirects]]
   from  = "/food-pairings"
-  to    = "https://YOUR_BACKEND_URL/food-pairings"
+  to    = "https://wine-journal-production.up.railway.app/food-pairings"
   status = 200
   force  = true
 
 [[redirects]]
   from  = "/wine-food-pairings"
-  to    = "https://YOUR_BACKEND_URL/wine-food-pairings"
+  to    = "https://wine-journal-production.up.railway.app/wine-food-pairings"
   status = 200
   force  = true
 
