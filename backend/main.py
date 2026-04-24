@@ -5,7 +5,7 @@ from models import TastingEntry
 import database
 import json
 import os
-from groq import Groq
+import anthropic
 
 app = FastAPI(title="Wine Journal API")
 
@@ -20,9 +20,9 @@ database.init_db()
 
 
 def get_client():
-    if not os.environ.get("GROQ_API_KEY"):
-        raise HTTPException(status_code=500, detail="GROQ_API_KEY is not set")
-    return Groq(api_key=os.environ["GROQ_API_KEY"])
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY is not set")
+    return anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
 
 def strip_code_fences(text: str) -> str:
@@ -59,8 +59,8 @@ def delete_tasting(tasting_id: int):
 def lookup_wine(wine_name: str = Query(...), producer: str = Query(...)):
     try:
         client = get_client()
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
             max_tokens=256,
             messages=[{
                 "role": "user",
@@ -74,7 +74,7 @@ def lookup_wine(wine_name: str = Query(...), producer: str = Query(...)):
                 ),
             }],
         )
-        text = strip_code_fences(response.choices[0].message.content.strip())
+        text = strip_code_fences(response.content[0].text.strip())
         data = json.loads(text)
         return {
             "country": str(data.get("country", "")),
@@ -120,12 +120,12 @@ def detect_wine_profile(
             '"acidity" (1–5 int), "tannin" (1–5 int), "body" (1–5 int), "alcohol" (1–5 int). '
             'Use typical values for this wine style. No explanation.'
         )
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
             max_tokens=256,
             messages=[{"role": "user", "content": " ".join(parts)}],
         )
-        text = strip_code_fences(response.choices[0].message.content.strip())
+        text = strip_code_fences(response.content[0].text.strip())
         data = json.loads(text)
         valid = set(AROMA_OPTIONS)
         return {
@@ -178,15 +178,12 @@ def get_pairings(data: dict):
 
     def stream():
         client = get_client()
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+        with client.messages.stream(
+            model="claude-haiku-4-5-20251001",
             max_tokens=512,
             messages=[{"role": "user", "content": prompt}],
-            stream=True,
-        )
-        for chunk in response:
-            text = chunk.choices[0].delta.content
-            if text:
+        ) as s:
+            for text in s.text_stream:
                 yield text
 
     return StreamingResponse(stream(), media_type="text/plain")
@@ -200,15 +197,15 @@ def scan_label(data: dict):
         raise HTTPException(status_code=400, detail="No image provided")
     try:
         client = get_client()
-        response = client.chat.completions.create(
-            model="meta-llama/llama-4-scout-17b-16e-instruct",
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
             max_tokens=256,
             messages=[{
                 "role": "user",
                 "content": [
                     {
-                        "type": "image_url",
-                        "image_url": {"url": f"data:{media_type};base64,{image_data}"},
+                        "type": "image",
+                        "source": {"type": "base64", "media_type": media_type, "data": image_data},
                     },
                     {
                         "type": "text",
@@ -228,7 +225,7 @@ def scan_label(data: dict):
                 ],
             }],
         )
-        text = strip_code_fences(response.choices[0].message.content.strip())
+        text = strip_code_fences(response.content[0].text.strip())
         d = json.loads(text)
         return {
             "wine_name": str(d.get("wine_name", "")),
@@ -253,15 +250,15 @@ def scan_menu(data: dict):
         raise HTTPException(status_code=400, detail="No image provided")
     try:
         client = get_client()
-        response = client.chat.completions.create(
-            model="meta-llama/llama-4-scout-17b-16e-instruct",
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
             max_tokens=512,
             messages=[{
                 "role": "user",
                 "content": [
                     {
-                        "type": "image_url",
-                        "image_url": {"url": f"data:{media_type};base64,{image_data}"},
+                        "type": "image",
+                        "source": {"type": "base64", "media_type": media_type, "data": image_data},
                     },
                     {
                         "type": "text",
@@ -275,7 +272,7 @@ def scan_menu(data: dict):
                 ],
             }],
         )
-        text = strip_code_fences(response.choices[0].message.content.strip())
+        text = strip_code_fences(response.content[0].text.strip())
         items = json.loads(text)
         return {"items": [str(i) for i in items if i]}
     except HTTPException:
@@ -292,15 +289,15 @@ def scan_wine_menu(data: dict):
         raise HTTPException(status_code=400, detail="No image provided")
     try:
         client = get_client()
-        response = client.chat.completions.create(
-            model="meta-llama/llama-4-scout-17b-16e-instruct",
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
             max_tokens=512,
             messages=[{
                 "role": "user",
                 "content": [
                     {
-                        "type": "image_url",
-                        "image_url": {"url": f"data:{media_type};base64,{image_data}"},
+                        "type": "image",
+                        "source": {"type": "base64", "media_type": media_type, "data": image_data},
                     },
                     {
                         "type": "text",
@@ -315,7 +312,7 @@ def scan_wine_menu(data: dict):
                 ],
             }],
         )
-        text = strip_code_fences(response.choices[0].message.content.strip())
+        text = strip_code_fences(response.content[0].text.strip())
         items = json.loads(text)
         return {"items": [str(i) for i in items if i]}
     except HTTPException:
@@ -338,15 +335,12 @@ def wine_food_pairings(data: dict):
 
     def stream():
         client = get_client()
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+        with client.messages.stream(
+            model="claude-haiku-4-5-20251001",
             max_tokens=600,
             messages=[{"role": "user", "content": prompt}],
-            stream=True,
-        )
-        for chunk in response:
-            text = chunk.choices[0].delta.content
-            if text:
+        ) as s:
+            for text in s.text_stream:
                 yield text
 
     return StreamingResponse(stream(), media_type="text/plain")
@@ -382,15 +376,12 @@ def menu_pairings(data: dict):
 
     def stream():
         client = get_client()
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+        with client.messages.stream(
+            model="claude-haiku-4-5-20251001",
             max_tokens=600,
             messages=[{"role": "user", "content": prompt}],
-            stream=True,
-        )
-        for chunk in response:
-            text = chunk.choices[0].delta.content
-            if text:
+        ) as s:
+            for text in s.text_stream:
                 yield text
 
     return StreamingResponse(stream(), media_type="text/plain")
@@ -415,15 +406,12 @@ def food_pairings(data: dict):
 
     def stream():
         client = get_client()
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+        with client.messages.stream(
+            model="claude-haiku-4-5-20251001",
             max_tokens=600,
             messages=[{"role": "user", "content": prompt}],
-            stream=True,
-        )
-        for chunk in response:
-            text = chunk.choices[0].delta.content
-            if text:
+        ) as s:
+            for text in s.text_stream:
                 yield text
 
     return StreamingResponse(stream(), media_type="text/plain")
