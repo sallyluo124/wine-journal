@@ -98,25 +98,24 @@ export default function TastingList({ entries, onDelete }) {
             {/* ── Detail panel ── */}
             {open && (
               <div className="tl-detail">
-                {(e.country || e.region || e.village) && (
-                  <div className="tl-row">
-                    <span className="tl-field-label">Origin</span>
-                    <span className="tl-origin">
-                      {[e.village, e.region, e.country].filter(Boolean).join(", ")}
-                    </span>
+                <div className="tl-wine-details">
+                  <div className="tl-wine-details-row">
+                    <span className="tl-wine-details-name">{e.wine_name}{e.vintage ? ` ${e.vintage}` : ""}</span>
+                    {e.producer && <span className="tl-wine-details-producer">{e.producer}</span>}
                   </div>
-                )}
-
-                {e.grapes?.length > 0 && (
-                  <div className="tl-row">
-                    <span className="tl-field-label">Grapes</span>
+                  {(e.country || e.region || e.village) && (
+                    <div className="tl-wine-details-origin">
+                      {[e.village, e.region, e.country].filter(Boolean).join(" · ")}
+                    </div>
+                  )}
+                  {e.grapes?.length > 0 && (
                     <div className="tl-grapes">
                       {e.grapes.map((g) => (
                         <span key={g} className="tl-grape-tag">{g}</span>
                       ))}
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {e.aromas.length > 0 && (
                   <div className="tl-row">
