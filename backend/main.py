@@ -3,8 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from models import TastingEntry
 import database
-import anthropic
 import json
+import os
+from groq import Groq
 
 app = FastAPI(title="Wine Journal API")
 
@@ -16,6 +17,18 @@ app.add_middleware(
 )
 
 database.init_db()
+
+
+def get_client():
+    if not os.environ.get("GROQ_API_KEY"):
+        raise HTTPException(status_code=500, detail="GROQ_API_KEY is not set")
+    return Groq(api_key=os.environ["GROQ_API_KEY"])
+
+
+def strip_code_fences(text: str) -> str:
+    if "```" in text:
+        return "\n".join(l for l in text.splitlines() if not l.startswith("```"))
+    return text
 
 
 @app.post("/tastings", response_model=TastingEntry, status_code=201)
@@ -44,13 +57,10 @@ def delete_tasting(tasting_id: int):
 
 @app.get("/lookup")
 def lookup_wine(wine_name: str = Query(...), producer: str = Query(...)):
-    import os
     try:
-        if not os.environ.get("ANTHROPIC_API_KEY"):
-            raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY is not set")
-        client = anthropic.Anthropic()
-        response = client.messages.create(
-            model="claude-haiku-4-5-20251001",
+        client = get_client()
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
             max_tokens=256,
             messages=[{
                 "role": "user",
@@ -64,9 +74,7 @@ def lookup_wine(wine_name: str = Query(...), producer: str = Query(...)):
                 ),
             }],
         )
-        text = response.content[0].text.strip()
-        if "```" in text:
-            text = "\n".join(l for l in text.splitlines() if not l.startswith("```"))
+        text = strip_code_fences(response.choices[0].message.content.strip())
         data = json.loads(text)
         return {
             "country": str(data.get("country", "")),
@@ -98,11 +106,8 @@ def detect_wine_profile(
     region: str = Query(""),
     grapes: str = Query(""),
 ):
-    import os
     try:
-        if not os.environ.get("ANTHROPIC_API_KEY"):
-            raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY is not set")
-        client = anthropic.Anthropic()
+        client = get_client()
         parts = [f'Wine: "{wine_name}"']
         if producer: parts.append(f'Producer: "{producer}"')
         origin = ", ".join(filter(None, [region, country]))
@@ -115,14 +120,12 @@ def detect_wine_profile(
             '"acidity" (1–5 int), "tannin" (1–5 int), "body" (1–5 int), "alcohol" (1–5 int). '
             'Use typical values for this wine style. No explanation.'
         )
-        response = client.messages.create(
-            model="claude-haiku-4-5-20251001",
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
             max_tokens=256,
             messages=[{"role": "user", "content": " ".join(parts)}],
         )
-        text = response.content[0].text.strip()
-        if "```" in text:
-            text = "\n".join(l for l in text.splitlines() if not l.startswith("```"))
+        text = strip_code_fences(response.choices[0].message.content.strip())
         data = json.loads(text)
         valid = set(AROMA_OPTIONS)
         return {
@@ -174,41 +177,38 @@ def get_pairings(data: dict):
     prompt = "\n".join(lines)
 
     def stream():
-        with anthropic.Anthropic().messages.stream(
-            model="claude-haiku-4-5-20251001",
+        client = get_client()
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
             max_tokens=512,
             messages=[{"role": "user", "content": prompt}],
-        ) as s:
-            for chunk in s.text_stream:
-                yield chunk
+            stream=True,
+        )
+        for chunk in response:
+            text = chunk.choices[0].delta.content
+            if text:
+                yield text
 
     return StreamingResponse(stream(), media_type="text/plain")
 
 
 @app.post("/scan-label")
 def scan_label(data: dict):
-    import os
     image_data = data.get("image")
     media_type = data.get("media_type", "image/jpeg")
     if not image_data:
         raise HTTPException(status_code=400, detail="No image provided")
     try:
-        if not os.environ.get("ANTHROPIC_API_KEY"):
-            raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY is not set")
-        client = anthropic.Anthropic()
-        response = client.messages.create(
-            model="claude-haiku-4-5-20251001",
+        client = get_client()
+        response = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
             max_tokens=256,
             messages=[{
                 "role": "user",
                 "content": [
                     {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": media_type,
-                            "data": image_data,
-                        },
+                        "type": "image_url",
+                        "image_url": {"url": f"data:{media_type};base64,{image_data}"},
                     },
                     {
                         "type": "text",
@@ -228,9 +228,7 @@ def scan_label(data: dict):
                 ],
             }],
         )
-        text = response.content[0].text.strip()
-        if "```" in text:
-            text = "\n".join(l for l in text.splitlines() if not l.startswith("```"))
+        text = strip_code_fences(response.choices[0].message.content.strip())
         d = json.loads(text)
         return {
             "wine_name": str(d.get("wine_name", "")),
@@ -249,28 +247,21 @@ def scan_label(data: dict):
 
 @app.post("/scan-menu")
 def scan_menu(data: dict):
-    import os
     image_data = data.get("image")
     media_type = data.get("media_type", "image/jpeg")
     if not image_data:
         raise HTTPException(status_code=400, detail="No image provided")
     try:
-        if not os.environ.get("ANTHROPIC_API_KEY"):
-            raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY is not set")
-        client = anthropic.Anthropic()
-        response = client.messages.create(
-            model="claude-haiku-4-5-20251001",
+        client = get_client()
+        response = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
             max_tokens=512,
             messages=[{
                 "role": "user",
                 "content": [
                     {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": media_type,
-                            "data": image_data,
-                        },
+                        "type": "image_url",
+                        "image_url": {"url": f"data:{media_type};base64,{image_data}"},
                     },
                     {
                         "type": "text",
@@ -284,9 +275,7 @@ def scan_menu(data: dict):
                 ],
             }],
         )
-        text = response.content[0].text.strip()
-        if "```" in text:
-            text = "\n".join(l for l in text.splitlines() if not l.startswith("```"))
+        text = strip_code_fences(response.choices[0].message.content.strip())
         items = json.loads(text)
         return {"items": [str(i) for i in items if i]}
     except HTTPException:
@@ -297,28 +286,21 @@ def scan_menu(data: dict):
 
 @app.post("/scan-wine-menu")
 def scan_wine_menu(data: dict):
-    import os
     image_data = data.get("image")
     media_type = data.get("media_type", "image/jpeg")
     if not image_data:
         raise HTTPException(status_code=400, detail="No image provided")
     try:
-        if not os.environ.get("ANTHROPIC_API_KEY"):
-            raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY is not set")
-        client = anthropic.Anthropic()
-        response = client.messages.create(
-            model="claude-haiku-4-5-20251001",
+        client = get_client()
+        response = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
             max_tokens=512,
             messages=[{
                 "role": "user",
                 "content": [
                     {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": media_type,
-                            "data": image_data,
-                        },
+                        "type": "image_url",
+                        "image_url": {"url": f"data:{media_type};base64,{image_data}"},
                     },
                     {
                         "type": "text",
@@ -333,9 +315,7 @@ def scan_wine_menu(data: dict):
                 ],
             }],
         )
-        text = response.content[0].text.strip()
-        if "```" in text:
-            text = "\n".join(l for l in text.splitlines() if not l.startswith("```"))
+        text = strip_code_fences(response.choices[0].message.content.strip())
         items = json.loads(text)
         return {"items": [str(i) for i in items if i]}
     except HTTPException:
@@ -357,13 +337,17 @@ def wine_food_pairings(data: dict):
     )
 
     def stream():
-        with anthropic.Anthropic().messages.stream(
-            model="claude-haiku-4-5-20251001",
+        client = get_client()
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
             max_tokens=600,
             messages=[{"role": "user", "content": prompt}],
-        ) as s:
-            for chunk in s.text_stream:
-                yield chunk
+            stream=True,
+        )
+        for chunk in response:
+            text = chunk.choices[0].delta.content
+            if text:
+                yield text
 
     return StreamingResponse(stream(), media_type="text/plain")
 
@@ -397,13 +381,17 @@ def menu_pairings(data: dict):
         )
 
     def stream():
-        with anthropic.Anthropic().messages.stream(
-            model="claude-haiku-4-5-20251001",
+        client = get_client()
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
             max_tokens=600,
             messages=[{"role": "user", "content": prompt}],
-        ) as s:
-            for chunk in s.text_stream:
-                yield chunk
+            stream=True,
+        )
+        for chunk in response:
+            text = chunk.choices[0].delta.content
+            if text:
+                yield text
 
     return StreamingResponse(stream(), media_type="text/plain")
 
@@ -426,12 +414,16 @@ def food_pairings(data: dict):
     )
 
     def stream():
-        with anthropic.Anthropic().messages.stream(
-            model="claude-haiku-4-5-20251001",
+        client = get_client()
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
             max_tokens=600,
             messages=[{"role": "user", "content": prompt}],
-        ) as s:
-            for chunk in s.text_stream:
-                yield chunk
+            stream=True,
+        )
+        for chunk in response:
+            text = chunk.choices[0].delta.content
+            if text:
+                yield text
 
     return StreamingResponse(stream(), media_type="text/plain")
