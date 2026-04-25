@@ -438,6 +438,13 @@ textarea {
   color: #fff;
 }
 
+.aroma-tag.active--both {
+  background: #6b1f1f;
+  border-color: #c4756a;
+  border-width: 6px;
+  color: #fff;
+}
+
 
 .aroma-tag:hover:not(.active) {
   border-color: #9a6b4b;

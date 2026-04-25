@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from models import TastingEntry
+from dotenv import load_dotenv
+load_dotenv()
 import database
 import json
 import os
