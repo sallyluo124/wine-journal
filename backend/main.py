@@ -49,6 +49,14 @@ def get_tasting(tasting_id: int):
     return entry
 
 
+@app.patch("/tastings/{tasting_id}", response_model=TastingEntry)
+def update_tasting(tasting_id: int, entry: TastingEntry):
+    result = database.update_tasting(tasting_id, entry)
+    if not result:
+        raise HTTPException(status_code=404, detail="Tasting not found")
+    return result
+
+
 @app.delete("/tastings/{tasting_id}", status_code=204)
 def delete_tasting(tasting_id: int):
     if not database.delete_tasting(tasting_id):

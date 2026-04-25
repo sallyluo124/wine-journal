@@ -86,6 +86,29 @@ def fetch_one(tasting_id: int) -> TastingEntry | None:
     return _row_to_entry(row) if row else None
 
 
+def update_tasting(tasting_id: int, entry: TastingEntry) -> TastingEntry | None:
+    with _connect() as conn:
+        cur = conn.execute(
+            """UPDATE tastings SET
+               wine_name=?, producer=?, vintage=?, color=?, aromas=?,
+               acidity=?, tannin=?, body=?, alcohol=?, rating=?, notes=?, tasted_on=?,
+               country=?, region=?, village=?, grapes=?
+               WHERE id=?""",
+            (
+                entry.wine_name, entry.producer, entry.vintage, entry.color,
+                json.dumps(entry.aromas),
+                entry.acidity, entry.tannin, entry.body, entry.alcohol,
+                entry.rating, entry.notes, str(entry.tasted_on),
+                entry.country, entry.region, entry.village,
+                json.dumps(entry.grapes),
+                tasting_id,
+            ),
+        )
+        if cur.rowcount == 0:
+            return None
+    return fetch_one(tasting_id)
+
+
 def delete_tasting(tasting_id: int) -> bool:
     with _connect() as conn:
         cur = conn.execute(

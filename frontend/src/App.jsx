@@ -26,6 +26,10 @@ export default function App() {
     setEntries((prev) => prev.filter((e) => e.id !== id));
   }
 
+  function handleUpdate(updated) {
+    setEntries((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
+  }
+
   return (
     <div>
       <header className="app-header">
@@ -70,7 +74,7 @@ export default function App() {
           <TastingForm onSaved={handleSaved} />
         </div>
         <div style={{ display: view === "list" ? "block" : "none" }}>
-          <TastingList entries={entries} onDelete={handleDelete} />
+          <TastingList entries={entries} onDelete={handleDelete} onUpdate={handleUpdate} />
         </div>
       </div>
 

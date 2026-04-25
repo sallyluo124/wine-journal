@@ -297,7 +297,21 @@
 .tl-actions {
   display: flex;
   justify-content: flex-end;
+  gap: .5rem;
 }
+
+.tl-btn-edit {
+  padding: .35rem .9rem;
+  background: none;
+  border: 1.5px solid #b89070;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: .82rem;
+  color: #6b4423;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.tl-btn-edit:hover { background: #6b4423; color: #fff; }
 
 .tl-btn-delete {
   padding: .35rem .9rem;
@@ -322,3 +336,133 @@
   }
   .tl-producer, .tl-date { display: none; }
 }
+
+/* ── Edit form ── */
+.tl-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tl-edit-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+.tl-edit-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .6rem; }
+
+.tl-edit-label {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  font-size: .8rem;
+  font-weight: 600;
+  color: #5a3a20;
+}
+
+.tl-edit-input {
+  padding: .35rem .6rem;
+  border: 1.5px solid #d9c8b8;
+  border-radius: 6px;
+  font-size: .88rem;
+  font-family: inherit;
+  color: #3a2214;
+  background: #fff;
+}
+.tl-edit-input:focus { outline: none; border-color: #9a6b4b; }
+
+.tl-edit-textarea {
+  padding: .35rem .6rem;
+  border: 1.5px solid #d9c8b8;
+  border-radius: 6px;
+  font-size: .88rem;
+  font-family: inherit;
+  color: #3a2214;
+  background: #fff;
+  resize: vertical;
+}
+.tl-edit-textarea:focus { outline: none; border-color: #9a6b4b; }
+
+.tl-edit-section-label {
+  display: block;
+  font-size: .8rem;
+  font-weight: 600;
+  color: #5a3a20;
+  margin-bottom: .4rem;
+}
+
+.tl-edit-aroma-group { margin-bottom: .5rem; }
+.tl-edit-aroma-cat {
+  font-size: .75rem;
+  font-weight: 600;
+  color: #9a6b4b;
+  display: block;
+  margin-bottom: .25rem;
+}
+.tl-edit-aroma-chips { display: flex; flex-wrap: wrap; gap: .3rem; }
+.tl-edit-aroma-chip {
+  padding: .2rem .6rem;
+  border-radius: 14px;
+  border: 1.5px solid #d9c8b8;
+  background: #fdf9f5;
+  font-size: .78rem;
+  font-family: inherit;
+  color: #4a2c1a;
+  cursor: pointer;
+  transition: background .1s, border-color .1s;
+}
+.tl-edit-aroma-chip--on {
+  background: #6b1f1f;
+  border-color: #6b1f1f;
+  color: #fff;
+}
+
+.tl-edit-slider-row {
+  display: grid;
+  grid-template-columns: 5rem 1fr 2.5rem;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: .3rem;
+}
+.tl-edit-slider-label { font-size: .8rem; color: #5a3a20; font-weight: 500; text-transform: capitalize; }
+.tl-edit-slider-val { font-size: .8rem; color: #7a5a42; text-align: right; }
+
+.tl-edit-stars { display: flex; gap: .2rem; }
+.tl-star {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #d9c8b8;
+  padding: 0;
+}
+.tl-star--on { color: #c8960c; }
+
+.tl-edit-actions {
+  display: flex;
+  gap: .6rem;
+  justify-content: flex-end;
+  padding-top: .25rem;
+}
+
+.tl-btn-save {
+  padding: .4rem 1.1rem;
+  background: #6b1f1f;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tl-btn-save:disabled { opacity: .6; cursor: default; }
+.tl-btn-save:not(:disabled):hover { background: #8b2e2e; }
+
+.tl-btn-cancel {
+  padding: .4rem 1rem;
+  background: none;
+  border: 1.5px solid #d9c8b8;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: .85rem;
+  color: #7a5a42;
+  cursor: pointer;
+}
+.tl-btn-cancel:hover { background: #f5ede3; }
