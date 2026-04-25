@@ -310,6 +310,28 @@ export default function TastingForm({ onSaved }) {
     <form className="tasting-form" onSubmit={handleSubmit} noValidate>
       <h2>New Tasting</h2>
 
+      {/* ── Scan label ── */}
+      <div className="mode-selector">
+        <button
+          type="button"
+          className="mode-btn"
+          onClick={() => labelFileRef.current?.click()}
+          disabled={labelScanLoading}
+        >
+          {labelScanLoading ? "Scanning…" : "📷 Scan label"}
+        </button>
+        <input
+          ref={labelFileRef}
+          type="file"
+          accept="image/*"
+          style={{ display: "none" }}
+          onChange={handleLabelScan}
+        />
+        {labelScanError && (
+          <span className="lookup-error">{labelScanError}</span>
+        )}
+      </div>
+
       {/* ── Wine info ── */}
       <section className="section">
         <div className="row-2">
@@ -488,21 +510,6 @@ export default function TastingForm({ onSaved }) {
         >
           {detectStatus === "loading" ? "Detecting…" : "Show me what I'm tasting"}
         </button>
-        <button
-          type="button"
-          className="mode-btn"
-          onClick={() => labelFileRef.current?.click()}
-          disabled={labelScanLoading}
-        >
-          {labelScanLoading ? "Scanning…" : "📷 Scan label"}
-        </button>
-        <input
-          ref={labelFileRef}
-          type="file"
-          accept="image/*"
-          style={{ display: "none" }}
-          onChange={handleLabelScan}
-        />
         {detectStatus === "error" && (
           <span className="lookup-error">Detection failed — check ANTHROPIC_API_KEY</span>
         )}
