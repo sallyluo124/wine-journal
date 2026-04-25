@@ -250,6 +250,14 @@ export default function TastingForm({ onSaved }) {
       const data = await res.json();
       setAutoAromas(new Set(data.aromas));
       setAutoStructure({ acidity: data.acidity, tannin: data.tannin, body: data.body, alcohol: data.alcohol });
+      // Default any untouched slider to 3 as the user's pick
+      setManualStructure((prev) => {
+        const next = { ...prev };
+        for (const { key } of SLIDERS) {
+          if (next[key] == null) next[key] = 3;
+        }
+        return next;
+      });
       setForm((f) => ({
         ...f,
         acidity: data.acidity,
@@ -272,12 +280,12 @@ export default function TastingForm({ onSaved }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
-          aromas:  allAromas,
+          aromas:  [...manualAromas],
           vintage: form.vintage ? parseInt(form.vintage) : null,
-          acidity: parseInt(form.acidity),
-          tannin:  parseInt(form.tannin),
-          body:    parseInt(form.body),
-          alcohol: parseInt(form.alcohol),
+          acidity: manualStructure.acidity ?? 3,
+          tannin:  manualStructure.tannin  ?? 3,
+          body:    manualStructure.body    ?? 3,
+          alcohol: manualStructure.alcohol ?? 3,
           rating:  parseInt(form.rating),
         }),
       });
@@ -301,57 +309,6 @@ export default function TastingForm({ onSaved }) {
   return (
     <form className="tasting-form" onSubmit={handleSubmit} noValidate>
       <h2>New Tasting</h2>
-
-      {/* ── Mode selector ── */}
-      <div className="mode-selector">
-        <button
-          type="button"
-          className={`mode-btn ${mode === "manual" ? "mode-btn--active" : ""}`}
-          onClick={() => {
-            setMode("manual");
-            setAutoAromas(new Set());
-            setAutoStructure({});
-            setForm((f) => ({
-              ...f,
-              acidity: manualStructure.acidity ?? 3,
-              tannin:  manualStructure.tannin  ?? 3,
-              body:    manualStructure.body    ?? 3,
-              alcohol: manualStructure.alcohol ?? 3,
-            }));
-          }}
-        >
-          Fill it out myself
-        </button>
-        <button
-          type="button"
-          className={`mode-btn ${mode === "auto" ? "mode-btn--active" : ""}`}
-          onClick={handleDetect}
-          disabled={detectStatus === "loading"}
-        >
-          {detectStatus === "loading" ? "Detecting…" : "Show me what I'm tasting"}
-        </button>
-        <button
-          type="button"
-          className="mode-btn"
-          onClick={() => labelFileRef.current?.click()}
-          disabled={labelScanLoading}
-        >
-          {labelScanLoading ? "Scanning…" : "📷 Scan label"}
-        </button>
-        <input
-          ref={labelFileRef}
-          type="file"
-          accept="image/*"
-          style={{ display: "none" }}
-          onChange={handleLabelScan}
-        />
-        {detectStatus === "error" && (
-          <span className="lookup-error">Detection failed — check ANTHROPIC_API_KEY</span>
-        )}
-        {labelScanError && (
-          <span className="lookup-error">{labelScanError}</span>
-        )}
-      </div>
 
       {/* ── Wine info ── */}
       <section className="section">
@@ -503,6 +460,57 @@ export default function TastingForm({ onSaved }) {
         )}
       </section>
 
+      {/* ── Mode selector ── */}
+      <div className="mode-selector">
+        <button
+          type="button"
+          className={`mode-btn ${mode === "manual" ? "mode-btn--active" : ""}`}
+          onClick={() => {
+            setMode("manual");
+            setAutoAromas(new Set());
+            setAutoStructure({});
+            setForm((f) => ({
+              ...f,
+              acidity: manualStructure.acidity ?? 3,
+              tannin:  manualStructure.tannin  ?? 3,
+              body:    manualStructure.body    ?? 3,
+              alcohol: manualStructure.alcohol ?? 3,
+            }));
+          }}
+        >
+          Fill it out myself
+        </button>
+        <button
+          type="button"
+          className={`mode-btn ${mode === "auto" ? "mode-btn--active" : ""}`}
+          onClick={handleDetect}
+          disabled={detectStatus === "loading"}
+        >
+          {detectStatus === "loading" ? "Detecting…" : "Show me what I'm tasting"}
+        </button>
+        <button
+          type="button"
+          className="mode-btn"
+          onClick={() => labelFileRef.current?.click()}
+          disabled={labelScanLoading}
+        >
+          {labelScanLoading ? "Scanning…" : "📷 Scan label"}
+        </button>
+        <input
+          ref={labelFileRef}
+          type="file"
+          accept="image/*"
+          style={{ display: "none" }}
+          onChange={handleLabelScan}
+        />
+        {detectStatus === "error" && (
+          <span className="lookup-error">Detection failed — check ANTHROPIC_API_KEY</span>
+        )}
+        {labelScanError && (
+          <span className="lookup-error">{labelScanError}</span>
+        )}
+      </div>
+
       {/* ── Aromas ── */}
       <section className="section">
         <p className="section-label">
@@ -541,7 +549,7 @@ export default function TastingForm({ onSaved }) {
                     {aromas.map((a) => {
                       const isAuto   = autoAromas.has(a);
                       const isManual = manualAromas.has(a);
-                      const cls = isAuto && isManual ? "active"
+                      const cls = isAuto && isManual ? "active active--both"
                                 : isAuto             ? "active"
                                 : isManual           ? "active active--manual"
                                 : "";
